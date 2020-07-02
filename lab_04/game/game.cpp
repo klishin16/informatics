@@ -230,9 +230,7 @@ void game_t::play() {
             }
             step1 = step;
         }
-        if (no_steps) {
-            std::cout << "MDA" << std::endl;
-        }
+
         if (abs(step1.from.x - step1.to.x) == 2 && abs(step1.from.y - step1.to.y) == 2) {
             is_next = is_next_step(step1, counter);
         }
