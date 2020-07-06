@@ -9,6 +9,20 @@ float func(float n){
     //return -(n*n) - 0.5;
 };
 
+void showPlot(char** array, int height, int columns) {
+    for (int j = height; j >= 0; j--) {
+        if (height - j < 9) {
+            std::cout<<"0"<<height - j + 1;
+        } else {
+            std::cout<<height - j + 1;
+        }
+        for (int i = 0; i < columns; i++) {
+            std::cout<< array[i][j];
+        }
+        std::cout<<std::endl;
+    }
+}
+
 int main() {
     SetConsoleOutputCP(CP_UTF8);
 
@@ -28,7 +42,6 @@ int main() {
     char **map = new char *[columns];
 
     float incremX = (x1 - x0) / columns;
-    std::cout <<std::endl<<"incremX: "<< incremX << std::endl;
 
     float n = x0;
     float maxV = -1000.0;
@@ -43,57 +56,43 @@ int main() {
             minV = func(n);
         };
     };
+    minV = min(minV, 0);
+    maxV = max(maxV, 0);
+    float incremY = (maxV - minV) / (height);
 
     n = x0;
-
-    float incremY = (maxV - minV) / height;
-
+    int cout = 0;
     for (int i = 0; i < columns; i++) {
         float y = minV + incremY;
-        bool null_flag = false;
+        bool flag = false;
         char *column = new char [height + 1];
         for (int j = 0; j < height + 1; j++) {
 
-            if (y > 0 && !null_flag) {
+            if ((y >= 0) && !flag) {
                 column[j] = '-';
-                null_flag = true;
+                flag = true;
                 continue;
             }
-
-            if (y > 0) {
-                if (func(n) >= y) {
+            if (y >= 0) {
+                if ((func(n) > y) || fabs(func(n) - y) < 1e-6) {
                     column[j] = '#';
                 }
                 else {
                     column[j] = ' ';
                 }
             } else {
-                if (func(n) >= y) {
+                if ((func(n) > y) || fabs(func(n) - y) < 1e-6) {
                     column[j] = ' ';
                 }
                 else {
                     column[j] = '#';
                 }
             }
-
             y += incremY;
         }
         map[i] = column;
         n += incremX;
     }
-
-
-    for (int j = height; j >= 0; j--) {
-        if (height - j < 9) {
-            std::cout<<"0"<<height - j + 1;
-        } else {
-            std::cout<<height - j + 1;
-        }
-        for (int i = 0; i < columns; i++) {
-            std::cout<< map[i][j];
-        }
-        std::cout<<std::endl;
-    }
-
+    showPlot(map, height, columns);
     return 0;
 }
