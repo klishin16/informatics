@@ -37,6 +37,10 @@ private:
 
   bool game_t::is_next_step(const step_t &step, int side);
 
+  bool game_t::is_next_standard_step(const step_t &step, int side);
+
+  bool game_t::is_next_king_step(const step_t &step, int side);
+
     field_t field;
   std::vector<player_t> players;
 };

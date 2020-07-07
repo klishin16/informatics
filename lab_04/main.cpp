@@ -3,6 +3,7 @@
 #include "game/game.h"
 #include "strategies/human.h"
 #include "strategies/computer.h"
+#include "strategies/computer2.h"
 
 
 int main() {
@@ -18,7 +19,7 @@ int main() {
   //player2->print_stat();
 
   auto player1 = std::make_shared<computer_strategy_t>("BLACK");
-  auto player2 = std::make_shared<computer_strategy_t>("WHITE");
+  auto player2 = std::make_shared<computer_strategy2_t>("WHITE");
 
   //game_t game(player1, player2);
   //game.show_field();

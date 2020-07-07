@@ -39,59 +39,124 @@ bool game_t::is_king(const step_t &step, int side) const {
 }
 
 bool game_t::is_next_step(const step_t &step, int side) {
-    std::cout << "Check next step!" << std::endl;
     if (!field.deck[step.to.y][step.to.x].m_is_king) {
-        if ((step.to.x + 2 < 8) && (step.to.y + 2 < 8)) {
-            if ((!field.deck[step.to.y + 1][step.to.x + 1].m_is_empty) && (field.deck[step.to.y + 1][step.to.x + 1].m_side != side)) {
-                if (field.deck[step.to.y + 2 ][step.to.x + 2].m_is_empty) {
-                    return true;
-                }
+        return game_t::is_next_standard_step(step, side);
+    }
+    else {
+        return game_t::is_next_king_step(step, side);
+    }
+}
+
+bool game_t::is_next_standard_step(const step_t &step, int side) {
+    if ((step.to.x + 2 < 8) && (step.to.y + 2 < 8)) {
+        if ((!field.deck[step.to.y + 1][step.to.x + 1].m_is_empty) && (field.deck[step.to.y + 1][step.to.x + 1].m_side != side)) {
+            if (field.deck[step.to.y + 2 ][step.to.x + 2].m_is_empty) {
+                return true;
             }
         }
-        if ((step.to.x + 2 < 8) && (step.to.y - 2 >= 0)) {
-            if ((!field.deck[step.to.y - 1][step.to.x + 1].m_is_empty) && (field.deck[step.to.y - 1][step.to.x + 1].m_side != side)) {
-                if (field.deck[step.to.y - 2 ][step.to.x + 2].m_is_empty) {
-                    return true;
-                }
+    }
+    if ((step.to.x + 2 < 8) && (step.to.y - 2 >= 0)) {
+        if ((!field.deck[step.to.y - 1][step.to.x + 1].m_is_empty) && (field.deck[step.to.y - 1][step.to.x + 1].m_side != side)) {
+            if (field.deck[step.to.y - 2 ][step.to.x + 2].m_is_empty) {
+                return true;
             }
         }
-        if ((step.to.x - 2 >= 0) && (step.to.y + 2 < 8)) {
-            if ((!field.deck[step.to.y + 1][step.to.x - 1].m_is_empty) && (field.deck[step.to.y + 1][step.to.x -1].m_side != side)) {
-                if (field.deck[step.to.y + 2 ][step.to.x - 2].m_is_empty) {
-                    return true;
-                }
+    }
+    if ((step.to.x - 2 >= 0) && (step.to.y + 2 < 8)) {
+        if ((!field.deck[step.to.y + 1][step.to.x - 1].m_is_empty) && (field.deck[step.to.y + 1][step.to.x -1].m_side != side)) {
+            if (field.deck[step.to.y + 2 ][step.to.x - 2].m_is_empty) {
+                return true;
             }
         }
-        if ((step.to.x - 2 >= 0) && (step.to.y - 2 >= 0)) {
-            if ((!field.deck[step.to.y - 1][step.to.x - 1].m_is_empty) && (field.deck[step.to.y - 1][step.to.x -1].m_side != side)) {
-                if (field.deck[step.to.y - 2 ][step.to.x - 2].m_is_empty) {
-                    return true;
-                }
+    }
+    if ((step.to.x - 2 >= 0) && (step.to.y - 2 >= 0)) {
+        if ((!field.deck[step.to.y - 1][step.to.x - 1].m_is_empty) && (field.deck[step.to.y - 1][step.to.x -1].m_side != side)) {
+            if (field.deck[step.to.y - 2 ][step.to.x - 2].m_is_empty) {
+                return true;
             }
-        }
-        return false;
-    } else {
-        int x = step.to.y;
-        int y = step.to.x;
-        std::vector<int> steck;
-        std::vector<int> templ = {0, 1, 0};
-        while(x < 8 && y < 8) {
-            if (field.deck[y][x].m_is_empty) {
-                steck.push_back(0);
-            } else if (field.deck[y][x].m_side != side) {
-                steck.push_back(1);
-            } else {
-                steck.push_back(-1);
-            }
-            x++;
-            y++;
-        }
-        auto res = search(begin(steck), end(steck), begin(templ), end(templ));
-        if (res != end(steck)) {
-            return true;
         }
     }
     return false;
+}
+
+bool game_t::is_next_king_step(const step_t &step, int side) {
+    std::cout << "Is next king step!" << std::endl;
+    int x = step.to.y;
+    int y = step.to.x;
+    std::vector<int> steck;
+    std::vector<int> templ = {0, 1, 0};
+    while(x < 8 && y < 8) {
+        if (field.deck[y][x].m_is_empty) {
+            steck.push_back(0);
+        } else if (field.deck[y][x].m_side != side) {
+            steck.push_back(1);
+        } else {
+            steck.push_back(-1);
+        }
+        x++;
+        y++;
+    }
+    auto res = search(begin(steck), end(steck), begin(templ), end(templ));
+    if (res != end(steck)) {
+        return true;
+    }
+
+    x = step.to.x;
+    y = step.to.y;
+    std::vector<int> stack2;
+    while(x < 8 && y >= 0) {
+        if (field.deck[y][x].m_is_empty) {
+            stack2.push_back(0);
+        } else if (field.deck[y][x].m_side != side) {
+            stack2.push_back(1);
+        } else {
+            stack2.push_back(-1);
+        }
+        x++;
+        y--;
+    }
+    auto res2 = search(begin(stack2), end(stack2), begin(templ), end(templ));
+    if (res2 != end(stack2)) {
+        return true;
+    }
+
+    x = step.to.x;
+    y = step.to.y;
+    std::vector<int> stack3;
+    while(x >= 0 && y < 8) {
+        if (field.deck[y][x].m_is_empty) {
+            stack3.push_back(0);
+        } else if (field.deck[y][x].m_side != side) {
+            stack3.push_back(1);
+        } else {
+            stack3.push_back(-1);
+        }
+        x--;
+        y++;
+    }
+    auto res3 = search(begin(stack3), end(stack3), begin(templ), end(templ));
+    if (res3 != end(stack3)) {
+        return true;
+    }
+
+    x = step.to.x;
+    y = step.to.y;
+    std::vector<int> stack4;
+    while(x >= 0 && y >= 0) {
+        if (field.deck[y][x].m_is_empty) {
+            stack4.push_back(0);
+        } else if (field.deck[y][x].m_side != side) {
+            stack4.push_back(1);
+        } else {
+            stack4.push_back(-1);
+        }
+        x--;
+        y--;
+    }
+    auto res4 = search(begin(stack4), end(stack4), begin(templ), end(templ));
+    if (res4 != end(stack4)) {
+        return true;
+    }
 }
 
 bool game_t::apply_step(const step_t &step, int side) {
@@ -106,7 +171,6 @@ bool game_t::apply_standard_step(const step_t &step, int side) {
     if ((!field.deck[step.from.y][step.from.x].m_is_empty ) && (field.deck[step.to.y][step.to.x].m_is_empty)){
         if (abs(step.from.x - step.to.x) == 2 && abs(step.from.y - step.to.y) == 2) {
             //удар
-            std::cout << "Kill" << std::endl;
             cell_t temp {true};
             field.deck[(step.to.y + step.from.y)/2][(step.to.x + step.from.x)/2] = temp;
         }
@@ -126,7 +190,6 @@ bool game_t::apply_king_step(const step_t &step, int side) {
         } else {
             if (step.to.x - step.from.x > 0) {
                 if (step.to.y - step.from.y > 0) {
-                    std::cout << "Apply king step 1!" << std::endl;
                     if((!field.deck[step.to.y - 1][step.to.x - 1].m_is_empty) && (field.deck[step.to.y - 1][step.to.x - 1].m_side != side)) {
                         cell_t a = {true};
                         field.deck[step.to.y][step.to.x] = field.deck[step.from.y][step.from.x];
@@ -135,7 +198,6 @@ bool game_t::apply_king_step(const step_t &step, int side) {
                         return true;
                     }
                 } else {
-                    std::cout << "Apply king step 2!" << std::endl;
                     if((!field.deck[step.to.y + 1][step.to.x - 1].m_is_empty) && (field.deck[step.to.y + 1][step.to.x - 1].m_side != side)) {
                         cell_t a = {true};
                         field.deck[step.to.y][step.to.x] = field.deck[step.from.y][step.from.x];
@@ -147,7 +209,6 @@ bool game_t::apply_king_step(const step_t &step, int side) {
             }
             if (step.to.x - step.from.x < 0) {
                 if (step.to.y - step.from.y > 0) {
-                    std::cout << "Apply king step 3!" << std::endl;
                     if((!field.deck[step.to.y - 1][step.to.x + 1].m_is_empty) && (field.deck[step.to.y - 1][step.to.x + 1].m_side != side)) {
                         cell_t a = {true};
                         field.deck[step.to.y][step.to.x] = field.deck[step.from.y][step.from.x];
@@ -156,7 +217,6 @@ bool game_t::apply_king_step(const step_t &step, int side) {
                         return true;
                     }
                 } else {
-                    std::cout << "Apply king step 4!" << std::endl;
                     if ((!field.deck[step.to.y + 1][step.to.x + 1].m_is_empty) &&
                         (field.deck[step.to.y + 1][step.to.x + 1].m_side != side)) {
                         cell_t a = {true};
@@ -231,14 +291,12 @@ void game_t::play() {
             step1 = step;
         }
 
-        if (abs(step1.from.x - step1.to.x) == 2 && abs(step1.from.y - step1.to.y) == 2) {
+        if (abs(step1.from.x - step1.to.x) >= 2 && abs(step1.from.y - step1.to.y) >= 2) {
             is_next = is_next_step(step1, counter);
         }
-        std::cout << "Is_next_step: " << is_next << std::endl;
+        //std::cout << "Is_next_step: " << is_next << std::endl;
         game_t::show_field();
-        //Sleep(500);
     } while (is_next);
-      std::cout << "Counter++ : " << counter << std::endl;
   }
   std::cout << "\n \n \nGAME OVER!!!" << std::endl;
 

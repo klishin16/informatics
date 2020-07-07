@@ -1,52 +1,57 @@
-#include "computer.h"
+//
+// Created by nikita on 06.07.2020.
+//
+
+#include "computer2.h"
 
 #include <cassert>
 #include <iostream>
-#include <random>
 #include <vector>
 #include <random>
 
-step_t computer_strategy_t::search_kill(const point_t t, const field_t &field, int side) {
+computer_strategy2_t::computer_strategy2_t(std::string name) : name(std::move("Computer 2: " + name)) {};
+
+step_t computer_strategy2_t::search_kill(const point_t t, const field_t &field, int side) {
     if (field.deck[t.y][t.x].m_is_king) {
-        return computer_strategy_t::king_check_kill(t, field, side);
+        return computer_strategy2_t::king_check_kill(t, field, side);
     } else {
-        return computer_strategy_t::check_kill(t, field, side);
+        return computer_strategy2_t::check_kill(t, field, side);
     }
 }
 
-step_t computer_strategy_t::check_kill(point_t t, const field_t &fld, int side) {
-        if ((t.x + 2 < 8) && (t.y + 2 < 8)) {
-            if (!(fld.deck[t.y + 1][t.x + 1].m_is_empty) && (fld.deck[t.y + 2][t.x + 2].m_is_empty)) {
-                if (fld.deck[t.y + 1][t.x + 1].m_side != side) {
-                    return {t, point_t(t.x + 2, t.y + 2)};
-                }
+step_t computer_strategy2_t::check_kill(point_t t, const field_t &fld, int side) {
+    if ((t.x + 2 < 8) && (t.y + 2 < 8)) {
+        if (!(fld.deck[t.y + 1][t.x + 1].m_is_empty) && (fld.deck[t.y + 2][t.x + 2].m_is_empty)) {
+            if (fld.deck[t.y + 1][t.x + 1].m_side != side) {
+                return {t, point_t(t.x + 2, t.y + 2)};
             }
         }
-        if ((t.x + 2 < 8) && (t.y - 2 >= 0)) {
-            if (!(fld.deck[t.y - 1][t.x + 1].m_is_empty) && (fld.deck[t.y - 2][t.x + 2].m_is_empty)) {
-                if (fld.deck[t.y - 1][t.x + 1].m_side != side) {
-                    return {t, point_t(t.x + 2, t.y - 2)};
-                }
+    }
+    if ((t.x + 2 < 8) && (t.y - 2 >= 0)) {
+        if (!(fld.deck[t.y - 1][t.x + 1].m_is_empty) && (fld.deck[t.y - 2][t.x + 2].m_is_empty)) {
+            if (fld.deck[t.y - 1][t.x + 1].m_side != side) {
+                return {t, point_t(t.x + 2, t.y - 2)};
             }
         }
-        if ((t.x - 2 >= 0) && (t.y + 2 < 8)) {
-            if (!(fld.deck[t.y + 1][t.x - 1].m_is_empty) && (fld.deck[t.y + 2][t.x - 2].m_is_empty)) {
-                if (fld.deck[t.y + 1][t.x - 1].m_side != side) {
-                    return {t, point_t(t.x - 2, t.y + 2)};
-                }
+    }
+    if ((t.x - 2 >= 0) && (t.y + 2 < 8)) {
+        if (!(fld.deck[t.y + 1][t.x - 1].m_is_empty) && (fld.deck[t.y + 2][t.x - 2].m_is_empty)) {
+            if (fld.deck[t.y + 1][t.x - 1].m_side != side) {
+                return {t, point_t(t.x - 2, t.y + 2)};
             }
         }
-        if ((t.x - 2 >= 0) && (t.y - 2 >= 0)) {
-            if (!(fld.deck[t.y - 1][t.x - 1].m_is_empty) && (fld.deck[t.y - 2][t.x - 2].m_is_empty)) {
-                if (fld.deck[t.y - 1][t.x - 1].m_side != side) {
-                    return {t, point_t(t.x - 2, t.y - 2)};
-                }
+    }
+    if ((t.x - 2 >= 0) && (t.y - 2 >= 0)) {
+        if (!(fld.deck[t.y - 1][t.x - 1].m_is_empty) && (fld.deck[t.y - 2][t.x - 2].m_is_empty)) {
+            if (fld.deck[t.y - 1][t.x - 1].m_side != side) {
+                return {t, point_t(t.x - 2, t.y - 2)};
             }
         }
-        return {t, t};
+    }
+    return {t, t};
 }
 
-step_t computer_strategy_t::king_check_kill(const point_t t, const field_t &field, int side) {
+step_t computer_strategy2_t::king_check_kill(const point_t t, const field_t &field, int side) {
     int x = t.x;
     int y = t.y;
     std::vector<int> stack1;
@@ -130,15 +135,15 @@ step_t computer_strategy_t::king_check_kill(const point_t t, const field_t &fiel
     return {t, t};
 }
 
-std::vector<step_t> computer_strategy_t::available_steps(point_t t, const field_t &fld, bool is_king, int side) {
+std::vector<step_t> computer_strategy2_t::available_steps(point_t t, const field_t &fld, bool is_king, int side) {
     if (!is_king) {
-        return computer_strategy_t::standard_available_steps(t, fld, side);
+        return computer_strategy2_t::standard_available_steps(t, fld, side);
     } else {
-        return computer_strategy_t::king_available_steps(t, fld, side);
+        return computer_strategy2_t::king_available_steps(t, fld, side);
     }
 }
 
-std::vector<step_t> computer_strategy_t::standard_available_steps(point_t t, const field_t &fld, int side) {
+std::vector<step_t> computer_strategy2_t::standard_available_steps(point_t t, const field_t &fld, int side) {
     std::vector<step_t> steps;
     if (side == 0) { // BLACK
         if ((t.y + 1 < 8) && (t.x + 1 < 8) && (fld.deck[t.y + 1][t.x + 1].m_is_empty)) {
@@ -158,7 +163,7 @@ std::vector<step_t> computer_strategy_t::standard_available_steps(point_t t, con
     return steps;
 }
 
-std::vector<step_t> computer_strategy_t::king_available_steps(point_t t, const field_t &fld, int side) {
+std::vector<step_t> computer_strategy2_t::king_available_steps(point_t t, const field_t &fld, int side) {
     std::vector<step_t> steps;
     if ((t.y + 1 < 8) && (t.x + 1 < 8) && (fld.deck[t.y + 1][t.x + 1].m_is_empty)) {
         steps.push_back(step_t(t, point_t(t.x + 1, t.y + 1)));
@@ -175,30 +180,27 @@ std::vector<step_t> computer_strategy_t::king_available_steps(point_t t, const f
     return steps;
 }
 
-computer_strategy_t::computer_strategy_t(std::string name) :
-  name(std::move("Computer: " + name)) {}
-
-step_t computer_strategy_t::make_step(const field_t &fld, int side) {
+step_t computer_strategy2_t::make_step(const field_t &fld, int side) {
     std::cout << "Computer side: " << name << std::endl;
- if (side == 0) { // BLACK
-     return computer_strategy_t::make_step_black(fld, side);
- } else { //WHITE
-     return  computer_strategy_t::make_step_white(fld, side);
- }
+    if (side == 0) { // BLACK
+        return computer_strategy2_t::make_step_black(fld, side);
+    } else { //WHITE
+        return  computer_strategy2_t::make_step_white(fld, side);
+    }
 }
 
-step_t computer_strategy_t::make_step_black(const field_t &fld, int side) {
+step_t computer_strategy2_t::make_step_black(const field_t &fld, int side) {
     std::vector<step_t> all_steps;
     for (int i = 7; i >= 0; i--) {
         for (int j = 0; j < 8; j++) {
             if ((!fld.deck[i][j].m_is_empty) && (fld.deck[i][j].m_side == side)) {
 
-                step_t res = computer_strategy_t::search_kill(point_t(j, i), fld, side);
+                step_t res = computer_strategy2_t::search_kill(point_t(j, i), fld, side);
                 if (res.to.x != res.from.x) {
                     std::cout << "Computer step (kill): from: \n" << res.from.x+1 << ' ' << res.from.y+1 << " to: " << res.to.x+1 << ' ' << res.to.y+1 << std::endl;
                     return res;
                 } else {
-                    std::vector<step_t> temp = computer_strategy_t::available_steps(point_t(j, i), fld, fld.deck[i][j].m_is_king, side);
+                    std::vector<step_t> temp = computer_strategy2_t::available_steps(point_t(j, i), fld, fld.deck[i][j].m_is_king, side);
                     all_steps.insert(end(all_steps), temp.begin(), temp.end());
                 }
             }
@@ -208,23 +210,28 @@ step_t computer_strategy_t::make_step_black(const field_t &fld, int side) {
         std::cout << "Computer step: no steps! " << std::endl;
         return {point_t(-1, -1), point_t(-1, -1)};
     } else {
-        std::shuffle(all_steps.begin(), all_steps.end(), std::mt19937(std::random_device()()));
-        std::cout << "Computer step: from: " << all_steps[0].from.x+1 << ' ' << all_steps[0].from.y+1 << " to: " << all_steps[0].to.x+1 << ' ' << all_steps[0].to.y+1 << std::endl;
-        return all_steps[0];
+        step_t result = all_steps[0];
+        for (step_t step : all_steps) {
+            if (step.from.y < result.from.y) {
+                result = step;
+            }
+        }
+        std::cout << "Computer step: from: " << result.from.x + 1 << ' ' << result.from.y + 1 << " to: " << result.to.x + 1 << ' ' << result.to.y + 1 << std::endl;
+        return result;
     }
 }
 
-step_t computer_strategy_t::make_step_white(const field_t &fld, int side) {
+step_t computer_strategy2_t::make_step_white(const field_t &fld, int side) {
     std::vector<step_t> all_steps;
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
             if ((!fld.deck[j][i].m_is_empty) && (fld.deck[j][i].m_side == side)) {
-                step_t res = computer_strategy_t::search_kill(point_t(i, j), fld, side);
+                step_t res = computer_strategy2_t::search_kill(point_t(i, j), fld, side);
                 if (res.to.x != res.from.x) {
                     std::cout << "Computer step (kill): from: \n" << res.from.x+1 << ' ' << res.from.y+1 << " to: " << res.to.x+1 << ' ' << res.to.y+1 << std::endl;
                     return res;
                 } else {
-                    std::vector<step_t> temp = computer_strategy_t::available_steps(point_t(i, j), fld, fld.deck[j][i].m_is_king, side);
+                    std::vector<step_t> temp = computer_strategy2_t::available_steps(point_t(i, j), fld, fld.deck[j][i].m_is_king, side);
                     all_steps.insert(end(all_steps), temp.begin(), temp.end());
                 }
             }
@@ -234,14 +241,18 @@ step_t computer_strategy_t::make_step_white(const field_t &fld, int side) {
         std::cout << "Computer step: no steps! " << std::endl;
         return {point_t(-1, -1), point_t(-1, -1)};
     } else {
-        std::shuffle(all_steps.begin(), all_steps.end(), std::mt19937(std::random_device()()));
-        std::cout << "Computer step: from: " << all_steps[0].from.x + 1 << ' ' << all_steps[0].from.y + 1 << " to: "
-                  << all_steps[0].to.x + 1 << ' ' << all_steps[0].to.y + 1 << std::endl;
-        return all_steps[0];
+        step_t result = all_steps[0];
+        for (step_t step : all_steps) {
+            if (step.from.y > result.from.y) {
+                result = step;
+            }
+        }
+        std::cout << "Computer step: from: " << result.from.x + 1 << ' ' << result.from.y + 1 << " to: " << result.to.x + 1 << ' ' << result.to.y + 1 << std::endl;
+        return result;
     }
 }
 
-void computer_strategy_t::print_stat() const {
-  std::cout << "Random model [" << name << "]: " << std::endl;
-  computer_interface_t::print_stat();
+void computer_strategy2_t::print_stat() const {
+    std::cout << "Model 2 [" << name << "]: " << std::endl;
+    computer_interface_t::print_stat();
 }

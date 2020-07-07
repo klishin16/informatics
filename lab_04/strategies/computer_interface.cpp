@@ -23,6 +23,5 @@ void computer_interface_t::on_incorrect_step(const step_t &step, int side) const
 void computer_interface_t::print_stat() const {
   std::cout << "Wins:  " << win_counter << std::endl;
   std::cout << "Loses: " << lose_counter << std::endl;
-  std::cout << "Ties:  " << tie_counter << std::endl;
   std::cout << std::endl;
 }
