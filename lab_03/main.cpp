@@ -16,47 +16,49 @@ public:
     struct node_t* lst;
 
     int_list_t() { // O(1)
-        frst = NULL;
-        lst = NULL;
+        frst = nullptr;
+        lst = nullptr;
     }
 
     int_list_t(const int_list_t& other) { // COPY $other list O(other.size)
         for (int i = 0; i < other.size(); i++) {
             if (i != 0) {
-                node_t* elem = new node_t;
-                elem->field = other[i];
-                elem->prev = lst;
-                elem->next = NULL;
-                lst = elem;
+                auto* elem1 = new node_t;
+                elem1->field = other[i];
+                lst->next = elem1;
+                elem1->prev = lst;
+                elem1->next = nullptr;
+                lst = elem1;
             } else {
-                node_t* elem = new node_t;
+                auto* elem = new node_t;
                 elem->field = other[i];
-                elem->prev = NULL;
-                elem->next = NULL;
+                elem->prev = nullptr;
+                elem->next = nullptr;
                 frst = elem;
-                lst = elem;
+                lst = frst;
             }
         }
     }
 
     int_list_t(size_t count, int value) { // create list $count size and fill it with $value O($count)
-        node_t* elem = new node_t;
+        std::cout << "Here 2!" << std::endl;
+        auto* elem = new node_t;
         elem->field = value;
-        elem->next = NULL;
-        elem->prev = NULL;
+        elem->next = nullptr;
+        elem->prev = nullptr;
         frst = elem;
         lst = frst;
 
         for (int i = 0; i < int(count) - 1; i++) {
-            node_t* temp = new node_t;
-            //temp = (struct node_t*)malloc(sizeof(struct node_t));
+            auto* temp = new node_t;
             temp->field = value;
             lst->next = temp;
             temp->prev = lst;
-            temp->next = NULL;
+            temp->next = nullptr;
             lst = temp;
         }
     }
+
     ~int_list_t() {    // O(size)
         node_t* current = frst;
         node_t* c_next = frst;
@@ -70,16 +72,35 @@ public:
     }
 
     int_list_t& operator=(const int_list_t& other) { // O(size + other.size())
-        node_t* other_next = other.frst;
-        for (int i = 0; i < int(other.size()); i++) {
-            node_t* item = other_next;
-            other_next = item->next;
-            delete item;
+        for (int i = 0; i < other.size(); i++) {
+            if (i != 0) {
+                auto* elem1 = new node_t;
+                elem1->field = other[i];
+                lst->next = elem1;
+                elem1->prev = lst;
+                elem1->next = nullptr;
+                lst = elem1;
+            } else {
+                auto* elem = new node_t;
+                elem->field = other[i];
+                elem->prev = nullptr;
+                elem->next = nullptr;
+                frst = elem;
+                lst = frst;
+            }
         }
-        return const_cast<int_list_t &>(other); //
+
+        return *this;
+
+        //node_t* other_next = other.frst;
+        //for (int i = 0; i < int(other.size()); i++) {
+        //    node_t* item = other_next;
+        //    other_next = item->next;
+        //    delete item;
+        //}
+        //return const_cast<int_list_t &>(other); //
     }
 
-    //int& operator[](size_t pos); // O(min($pos, size - $pos))
     int& operator[](size_t pos) const { // O(min($pos, size - $pos))
         node_t* current = frst;
         for (int i = 0; i < pos; i++) {
@@ -91,32 +112,29 @@ public:
     int& back() const {   // last element O(1)
         return lst->field;
     }
-    //const int back() const; // O(1)
 
     int& front() const {  // first element O(1)
         return frst->field;
     }
 
-    //const int front() const; // O(1)
-
     void clear() { // O(size)
         node_t* current = frst;
         while (true)
         {
-            if (current->next != NULL) {
+            if (current->next != nullptr) {
                 node_t* nxt = current->next;
                 delete current;
             }
             else {
                 delete current;
-                frst = lst = NULL;
+                frst = lst = nullptr;
                 break;
             }
         }
     }
 
     size_t size() const { // O(1)
-        if (frst == NULL) {
+        if (frst == nullptr) {
             return 0;
         }
         else {
@@ -125,7 +143,7 @@ public:
             while (true)
             {
                 count++;
-                if (current->next == NULL) {
+                if (current->next == nullptr) {
                     break;
                 }
                 current = current->next;
@@ -133,8 +151,9 @@ public:
             return count;
         }
     }
+
     bool empty() const { // O(1)
-        if (frst != NULL) {
+        if (frst != nullptr) {
             return false;
         }
         else {
@@ -143,7 +162,7 @@ public:
     }
 
     void insert(size_t pos, int new_val){ // insert element $new_val BEFORE element with index $pos O(min($pos, size - $pos))
-        node_t* ins = new node_t;
+        auto* ins = new node_t;
         ins->field = new_val;
         node_t* current = frst;
         if (size() != 0) {
@@ -165,7 +184,7 @@ public:
     void push_front(int new_val) { // O(1) // добавить элемент в начало списка
         node_t* psh = new node_t;
         psh->field = new_val;
-        psh->prev = NULL;
+        psh->prev = nullptr;
         psh->next = frst;
         frst = psh;
     }
@@ -175,7 +194,7 @@ public:
         psh->field = new_val;
         psh->prev = lst;
         lst->next = psh;
-        psh->next = NULL;
+        psh->next = nullptr;
         lst = psh;
     }
 
@@ -193,35 +212,56 @@ public:
     void pop_front() { // O(1)
         node_t* p = frst;
         frst = frst->next;
-        frst->prev = NULL;
+        frst->prev = nullptr;
 
         delete p;
     }
+
     void pop_back() {  // O(1)
         node_t* p = lst;
         lst = lst->prev;
-        lst->next = NULL;
+        lst->next = nullptr;
 
         delete p;
     }
 
     int_list_t splice(size_t start_pos, size_t count) { // splice part of list into result (not copy!) O($start_pos + $count)
-      // не совсем понятно что данный метод должен делать;
+      int_list_t res;
+      node_t* current = frst;
+      for (int i = 0; i < start_pos; i++) {
+            current = current->next;
+      }
+      node_t* from = current;
+      node_t* to = current;
+      std::cout <<"From->field: " << from->field << std::endl;
+      for(int i = 0; i < count - 1; i++) {
+          current = current->next;
+      }
+      to = current;
+      std::cout <<"To->field: " << to->field << std::endl;
+      res.frst = from;
+      res.lst = to;
+      node_t* from_prev = from->prev;
+      from_prev->next = to->next;
+      to->prev = from_prev;
+      res.frst->prev = nullptr;
+      res.lst->next = nullptr;
+      return res;
     }
 
     int_list_t& merge(int_list_t& other) { // merge two lists, after operation $other must be valid empty list O(1)
         lst->next = other.frst;
         other.frst->prev = lst;
         lst = other.lst;
-        other.frst = NULL;
-        other.lst = NULL;
+        other.frst = nullptr;
+        other.lst = nullptr;
 
         return *this;
     }
 
     void reverse() { // O(size)
         node_t* prt = frst;
-        node_t* prev = NULL;
+        node_t* prev = nullptr;
         frst = lst;
         lst = prt;
         while (prt != frst) {
@@ -232,6 +272,7 @@ public:
         }
         frst->next = prev;
     }
+
     void swap(int_list_t& other) { // O(1)
         node_t* other_frst = other.frst;
         node_t* other_lst = other.lst;
@@ -309,5 +350,16 @@ int main()
     std::cout << "[2]: " << l[2] << std::endl;
     std::cin>>l;
     std::cout<<l;
+
+    int_list_t t1(7, 5);
+    int_list_t t2;
+    t2 = t1;
+    std::cout << t1;
+    std::cout << t2;
+    t2.insert(2, 7);
+    t2.insert(5, 14);
+    std::cout << t2;
+    int_list_t t3 = t2.splice(2, 3);
+    std::cout << t3;
 
 }
