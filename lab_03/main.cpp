@@ -41,7 +41,6 @@ public:
     }
 
     int_list_t(size_t count, int value) { // create list $count size and fill it with $value O($count)
-        std::cout << "Here 2!" << std::endl;
         auto* elem = new node_t;
         elem->field = value;
         elem->next = nullptr;
@@ -91,14 +90,6 @@ public:
         }
 
         return *this;
-
-        //node_t* other_next = other.frst;
-        //for (int i = 0; i < int(other.size()); i++) {
-        //    node_t* item = other_next;
-        //    other_next = item->next;
-        //    delete item;
-        //}
-        //return const_cast<int_list_t &>(other); //
     }
 
     int& operator[](size_t pos) const { // O(min($pos, size - $pos))
@@ -233,12 +224,10 @@ public:
       }
       node_t* from = current;
       node_t* to = current;
-      std::cout <<"From->field: " << from->field << std::endl;
       for(int i = 0; i < count - 1; i++) {
           current = current->next;
       }
       to = current;
-      std::cout <<"To->field: " << to->field << std::endl;
       res.frst = from;
       res.lst = to;
       node_t* from_prev = from->prev;
