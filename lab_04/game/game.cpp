@@ -1,6 +1,5 @@
 #include <iostream>
 #include "game.h"
-#include "windows.h"
 
 game_t::game_t(const player_t &first, const player_t &second) :
   field() {
