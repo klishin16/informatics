@@ -11,6 +11,7 @@ private:
         node_t *prev;
         // use this structure for nodes of list
     };
+    size_t _size = 0;
 public:
     struct node_t* frst;
     struct node_t* lst;
@@ -18,44 +19,53 @@ public:
     int_list_t() { // O(1)
         frst = nullptr;
         lst = nullptr;
+        _size = 0;
     }
 
     int_list_t(const int_list_t& other) { // COPY $other list O(other.size)
-        for (int i = 0; i < other.size(); i++) {
-            if (i != 0) {
-                auto* elem1 = new node_t;
-                elem1->field = other[i];
-                lst->next = elem1;
-                elem1->prev = lst;
-                elem1->next = nullptr;
-                lst = elem1;
-            } else {
-                auto* elem = new node_t;
-                elem->field = other[i];
-                elem->prev = nullptr;
-                elem->next = nullptr;
-                frst = elem;
-                lst = frst;
+        if (other.empty()) {
+            frst = nullptr;
+            lst = nullptr;
+        } else {
+            for (int i = 0; i < other.size(); i++) {
+                if (i == 0) {
+                    push_first(other[i]);
+                } else {
+                    auto* elem1 = new node_t;
+                    elem1->field = other[i];
+                    lst->next = elem1;
+                    elem1->prev = lst;
+                    elem1->next = nullptr;
+                    lst = elem1;
+                }
             }
         }
+        _size = other.size();
     }
 
     int_list_t(size_t count, int value) { // create list $count size and fill it with $value O($count)
-        auto* elem = new node_t;
-        elem->field = value;
-        elem->next = nullptr;
-        elem->prev = nullptr;
-        frst = elem;
-        lst = frst;
-
-        for (int i = 0; i < int(count) - 1; i++) {
-            auto* temp = new node_t;
-            temp->field = value;
-            lst->next = temp;
-            temp->prev = lst;
-            temp->next = nullptr;
-            lst = temp;
+        if(count == 0) {
+            frst = nullptr;
+            lst = nullptr;
         }
+        else {
+            auto* elem = new node_t;
+            elem->field = value;
+            elem->next = nullptr;
+            elem->prev = nullptr;
+            frst = elem;
+            lst = frst;
+
+            for (int i = 0; i < int(count) - 1; i++) {
+                auto* temp = new node_t;
+                temp->field = value;
+                lst->next = temp;
+                temp->prev = lst;
+                temp->next = nullptr;
+                lst = temp;
+            }
+        }
+        _size = count;
     }
 
     ~int_list_t() {    // O(size)
@@ -71,21 +81,30 @@ public:
     }
 
     int_list_t& operator=(const int_list_t& other) { // O(size + other.size())
-        for (int i = 0; i < other.size(); i++) {
-            if (i != 0) {
-                auto* elem1 = new node_t;
-                elem1->field = other[i];
-                lst->next = elem1;
-                elem1->prev = lst;
-                elem1->next = nullptr;
-                lst = elem1;
-            } else {
-                auto* elem = new node_t;
-                elem->field = other[i];
-                elem->prev = nullptr;
-                elem->next = nullptr;
-                frst = elem;
-                lst = frst;
+        if (!this->empty()) {
+            this->clear();
+        }
+        if (other.empty()) {
+            frst = nullptr;
+            lst = nullptr;
+        }
+        else {
+            for (int i = 0; i < other.size(); i++) {
+                if (i != 0) {
+                    auto* elem1 = new node_t;
+                    elem1->field = other[i];
+                    lst->next = elem1;
+                    elem1->prev = lst;
+                    elem1->next = nullptr;
+                    lst = elem1;
+                } else {
+                    auto* elem = new node_t;
+                    elem->field = other[i];
+                    elem->prev = nullptr;
+                    elem->next = nullptr;
+                    frst = elem;
+                    lst = frst;
+                }
             }
         }
 
@@ -93,11 +112,7 @@ public:
     }
 
     int& operator[](size_t pos) const { // O(min($pos, size - $pos))
-        node_t* current = frst;
-        for (int i = 0; i < pos; i++) {
-            current = current->next;
-        }
-        return  current->field;
+        return get_ptr(pos)->field;
     }
 
     int& back() const {   // last element O(1)
@@ -109,111 +124,138 @@ public:
     }
 
     void clear() { // O(size)
-        node_t* current = frst;
-        while (true)
-        {
-            if (current->next != nullptr) {
-                node_t* nxt = current->next;
-                delete current;
-            }
-            else {
-                delete current;
-                frst = lst = nullptr;
-                break;
-            }
-        }
+        this->~int_list_t();
+        frst = nullptr;
+        lst = nullptr;
+        _size = 0;
     }
 
     size_t size() const { // O(1)
-        if (frst == nullptr) {
-            return 0;
-        }
-        else {
-            int count = 0;
-            node_t* current = frst;
-            while (true)
-            {
-                count++;
-                if (current->next == nullptr) {
-                    break;
-                }
-                current = current->next;
-            };
-            return count;
-        }
+        return _size;
     }
 
     bool empty() const { // O(1)
-        if (frst != nullptr) {
-            return false;
-        }
-        else {
-            return true;
-        }
+        return frst == nullptr;
     }
 
     void insert(size_t pos, int new_val){ // insert element $new_val BEFORE element with index $pos O(min($pos, size - $pos))
         auto* ins = new node_t;
         ins->field = new_val;
-        node_t* current = frst;
-        if (size() != 0) {
-            if (size() == 1) {
-                push_front(new_val);
-            } else {
-                for (int i = 0; i < pos; i++) {
-                    current = current->next;
+        try {
+            if (empty()) {
+                if (pos != 0) {
+                    throw "Insertion to a non-existing position";
+                } else {
+                    push_first(new_val);
                 }
-                std::cout<<current->field<<std::endl;
-                ins->next = current;
-                ins->prev = current->prev;
-                current->prev->next = ins;
-                current->prev = ins;
+            } else {
+                if (pos == 0) {
+                    push_front(new_val);
+                } else if (pos == size()) {
+                    push_back(new_val);
+                } else if (pos < 0 || pos > size()) {
+                    throw "Insertion out of range";
+                } else {
+                    node_t* current = get_ptr(pos);
+                    ins->next = current;
+                    ins->prev = current->prev;
+                    current->prev->next = ins;
+                    current->prev = ins;
+                }
             }
+        } catch (const char* exception) {
+            std::cout << "Error: " << exception << std::endl;
         }
     }
 
     void push_front(int new_val) { // O(1) // добавить элемент в начало списка
-        node_t* psh = new node_t;
-        psh->field = new_val;
-        psh->prev = nullptr;
-        psh->next = frst;
-        frst = psh;
+        if (empty()) {
+            push_first(new_val);
+        }
+        else {
+            auto* psh = new node_t;
+            psh->field = new_val;
+            psh->prev = nullptr;
+            psh->next = frst;
+            frst = psh;
+        }
     }
 
     void push_back(int new_val) {    // O(1) // добавить элемент в конец списка
-        node_t* psh = new node_t;
-        psh->field = new_val;
-        psh->prev = lst;
-        lst->next = psh;
-        psh->next = nullptr;
-        lst = psh;
+        if (empty()) {
+            push_first(new_val);
+        }
+        else {
+            auto* psh = new node_t;
+            psh->field = new_val;
+            psh->prev = lst;
+            lst->next = psh;
+            psh->next = nullptr;
+            lst = psh;
+        }
     }
 
     void erase(size_t pos) { // remove element with index $pos O(min($pos, size - $pos))
-        node_t* current = frst;
-        for (int i = 0; i < pos; i++) {
-            current = current->next;
+        try {
+            if(empty()) {
+                throw "Erase empty list";
+            }
+            if(pos < 0 || pos >= size()) {
+                throw "Erase element out of range";
+            }
+            if (pos == 0) {
+                pop_front();
+            } else if (pos == size() - 1) {
+                pop_back();
+            } else {
+                node_t *current = get_ptr(pos);
+                std::cout << "here";
+                current->prev->next = current->next;
+                current->next->prev = current->prev;
+                delete current;
+            }
+            _size++;
+        } catch (const char* exception) {
+            std::cout << "Error: " << exception << std::endl;
         }
-        current->prev->next = current->next;
-        current->next->prev = current->prev;
-
-        delete current;
     }
 
     void pop_front() { // O(1)
-        node_t* p = frst;
-        frst = frst->next;
-        frst->prev = nullptr;
-
-        delete p;
+        try {
+            if (empty()) {
+                throw "Erase element from empty list";
+            }
+            if (size() == 1) {
+                clear();
+            } else {
+                node_t *p = frst;
+                frst = frst->next;
+                frst->prev = nullptr;
+                delete p;
+                _size--;
+            }
+        } catch (const char* exception) {
+            std::cout << "Error: " << exception;
+        }
     }
 
     void pop_back() {  // O(1)
-        node_t* p = lst;
-        lst = lst->prev;
-        lst->next = nullptr;
-
-        delete p;
+        try {
+            if (empty()) {
+                throw "Erase element from empty list";
+            }
+            if (size() == 1) {
+                clear();
+            } else {
+                node_t* p = lst;
+                lst = lst->prev;
+                lst->next = nullptr;
+                delete p;
+                _size--;
+            }
+        } catch (const char* exception) {
+            std::cout << "Error: " << exception;
+        }
     }
 
     int_list_t splice(size_t start_pos, size_t count) { // splice part of list into result (not copy!) O($start_pos + $count)
@@ -235,16 +277,18 @@ public:
       to->prev = from_prev;
       res.frst->prev = nullptr;
       res.lst->next = nullptr;
+      _size-=count;
       return res;
     }
 
     int_list_t& merge(int_list_t& other) { // merge two lists, after operation $other must be valid empty list O(1)
+        _size+=other._size;
         lst->next = other.frst;
         other.frst->prev = lst;
         lst = other.lst;
         other.frst = nullptr;
         other.lst = nullptr;
-
+        other._size = 0;
         return *this;
     }
 
@@ -263,19 +307,38 @@ public:
     }
 
     void swap(int_list_t& other) { // O(1)
+        int temp = other.size();
         node_t* other_frst = other.frst;
         node_t* other_lst = other.lst;
         other.frst = frst;
         other.lst = lst;
         frst = other_frst;
         lst = other_lst;
+        other._size = _size;
+        _size = temp;
     }
 
     friend std::istream& operator>>(std::istream& stream, int_list_t& list);    // O(size)
     friend std::ostream& operator<<(std::ostream& stream, const int_list_t& list); // O(size)
 
 private:
-    // any you want
+    node_t* get_ptr(size_t pos) const {
+        node_t* current = frst;
+        for (int i = 0; i < pos; i++) {
+            current = current->next;
+        }
+        return current;
+    }
+
+    void push_first(int val) {
+        auto* elem = new node_t;
+        elem->field = val;
+        elem->next = nullptr;
+        elem->prev = nullptr;
+        frst = elem;
+        lst = frst;
+        _size = 1;
+    }
 };
 
 std::istream& operator>>(std::istream& stream, int_list_t& list) {
@@ -292,14 +355,6 @@ std::ostream& operator<< (std::ostream& stream, const int_list_t& list) {
     }
     stream << ']' << std::endl;
     return stream;
-}
-
-void show_list(int_list_t& lst) {
-    std::cout<<"[ ";
-    for (int i = 0; i < lst.size(); i++) {
-        std::cout << lst[i] << " ";
-    }
-    std::cout<<']' << std::endl;
 }
 
 void comment(std::string txt) {
@@ -337,6 +392,44 @@ int main()
     std::cout<<l;
     std::cout << "[0]: " << l[0] << std::endl;
     std::cout << "[2]: " << l[2] << std::endl;
+
+
+    std::cout << "Test 1:" << std::endl;
+    int_list_t test1(0, 1);
+    std::cout << test1;
+    std::cout << "Test 2:" << std::endl;
+    int_list_t test2 = test1;
+    std::cout << test2;
+    std::cout << "Test 3:" << std::endl;
+    int_list_t test3;
+    test3 = test2;
+    test3.push_front(42);
+    std::cout << test3;
+    std::cout << "Test 4: push/pop" << std::endl;
+    int_list_t test4(1, 35);
+    std::cout << test4;
+    test4.pop_front();
+    std::cout << test4;
+    test4.push_back(38);
+    std::cout << test4;
+
+    std::cout << "Test 5: insert" << std::endl;
+    int_list_t test5(5, 14);
+    test5.insert(-1, 42);
+    std::cout << test5;
+    int_list_t test52;
+    test52.insert(1, 1);
+    std::cout << test52;
+
+    std::cout << "Test 6: erase" << std::endl;
+    int_list_t test6(1, 14);
+    test6.push_back(16);
+    test6.push_back(18);
+    std::cout << test6;
+    test6.erase(3);
+    std::cout << test6;
+
+
     std::cin>>l;
     std::cout<<l;
 
@@ -350,5 +443,4 @@ int main()
     std::cout << t2;
     int_list_t t3 = t2.splice(2, 3);
     std::cout << t3;
-
 }
