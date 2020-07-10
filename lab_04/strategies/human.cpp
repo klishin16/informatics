@@ -59,3 +59,7 @@ step_t human_strategy_t::make_step(const field_t &fld, int side) {
 void human_strategy_t::on_incorrect_step(const step_t &step, int side) const {
   std::cout << "Incorrect step!" << std::endl;
 }
+
+human_strategy_t::human_strategy_t(std::string name) {
+
+}

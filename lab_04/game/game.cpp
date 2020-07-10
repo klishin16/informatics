@@ -79,7 +79,6 @@ bool game_t::is_next_standard_step(const step_t &step, int side) {
 }
 
 bool game_t::is_next_king_step(const step_t &step, int side) {
-    std::cout << "Is next king step!" << std::endl;
     int x = step.to.y;
     int y = step.to.x;
     std::vector<int> steck;
@@ -156,6 +155,7 @@ bool game_t::is_next_king_step(const step_t &step, int side) {
     if (res4 != end(stack4)) {
         return true;
     }
+    return false;
 }
 
 bool game_t::apply_step(const step_t &step, int side) {
@@ -167,7 +167,8 @@ bool game_t::apply_step(const step_t &step, int side) {
 }
 
 bool game_t::apply_standard_step(const step_t &step, int side) {
-    if ((!field.deck[step.from.y][step.from.x].m_is_empty ) && (field.deck[step.to.y][step.to.x].m_is_empty)){
+    if ((!field.deck[step.from.y][step.from.x].m_is_empty ) && (field.deck[step.to.y][step.to.x].m_is_empty)
+    && (step.from.x != step.to.x) && (step.from.y != step.to.y)){
         if (abs(step.from.x - step.to.x) == 2 && abs(step.from.y - step.to.y) == 2) {
             //удар
             cell_t temp {true};
@@ -228,7 +229,6 @@ bool game_t::apply_king_step(const step_t &step, int side) {
             }
         }
     }
-    std::cout << "Apply king step (no)!" << std::endl;
     return false;
 }
 
@@ -293,7 +293,6 @@ void game_t::play() {
         if (abs(step1.from.x - step1.to.x) >= 2 && abs(step1.from.y - step1.to.y) >= 2) {
             is_next = is_next_step(step1, counter);
         }
-        //std::cout << "Is_next_step: " << is_next << std::endl;
         game_t::show_field();
     } while (is_next);
   }

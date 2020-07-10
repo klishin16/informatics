@@ -29,19 +29,19 @@ private:
 
   game_outcome_t is_win(bool no_steps) const;
 
-  bool game_t::apply_step(const step_t &step, int side);
+  bool apply_step(const step_t &step, int side);
 
-  bool game_t::apply_standard_step(const step_t &step, int side);
+  bool apply_standard_step(const step_t &step, int side);
 
-  bool game_t::apply_king_step(const step_t &step, int side);
+  bool apply_king_step(const step_t &step, int side);
 
-  bool game_t::is_next_step(const step_t &step, int side);
+  bool is_next_step(const step_t &step, int side);
 
-  bool game_t::is_next_standard_step(const step_t &step, int side);
+  bool is_next_standard_step(const step_t &step, int side);
 
-  bool game_t::is_next_king_step(const step_t &step, int side);
+  bool is_next_king_step(const step_t &step, int side);
 
     field_t field;
-  std::vector<player_t> players;
+    std::vector<player_t> players;
 };
 

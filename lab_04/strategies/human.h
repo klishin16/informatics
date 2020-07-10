@@ -1,10 +1,11 @@
 #pragma once
 
 #include "interface.h"
+#include "string"
 
 class human_strategy_t : public strategy_interface_t {
 public:
-  human_strategy_t() = default;
+  explicit human_strategy_t(std::string name);
 
   step_t make_step(const field_t &field, int side) override;
 
@@ -13,5 +14,8 @@ public:
   void on_win() override;
   void on_lose() override;
   void on_tie() override;
+
+private:
+    std::string name;
 
 };

@@ -64,7 +64,6 @@ step_t computer_strategy_t::king_check_kill(const point_t t, const field_t &fiel
     }
     auto res1 = search(begin(stack1), end(stack1), begin(templ), end(templ));
     if (res1 != end(stack1)) {
-        std::cout << "King check kill 1!" << std::endl;
         return {t, point_t(t.x + std::distance(stack1.begin(), res1) + 2, t.y + std::distance(stack1.begin(), res1) + 2)};
     }
 
@@ -84,7 +83,6 @@ step_t computer_strategy_t::king_check_kill(const point_t t, const field_t &fiel
     }
     auto res2 = search(begin(stack2), end(stack2), begin(templ), end(templ));
     if (res2 != end(stack2)) {
-        std::cout << "King check kill 2!" << std::endl;
         return {t, point_t(t.x + std::distance(stack2.begin(), res2) + 2, t.y - std::distance(stack2.begin(), res2) - 2)};
     }
 
@@ -104,7 +102,6 @@ step_t computer_strategy_t::king_check_kill(const point_t t, const field_t &fiel
     }
     auto res3 = search(begin(stack3), end(stack3), begin(templ), end(templ));
     if (res3 != end(stack3)) {
-        std::cout << "King check kill 3!" << std::endl;
         return {t, point_t(t.x - std::distance(stack3.begin(), res3) - 2, t.y + std::distance(stack3.begin(), res3) + 2)};
     }
 
@@ -124,7 +121,6 @@ step_t computer_strategy_t::king_check_kill(const point_t t, const field_t &fiel
     }
     auto res4 = search(begin(stack4), end(stack4), begin(templ), end(templ));
     if (res4 != end(stack4)) {
-        std::cout << "King check kill 4!" << std::endl;
         return {t, point_t(t.x - std::distance(stack4.begin(), res4) - 2, t.y - std::distance(stack4.begin(), res4) - 2)};
     }
     return {t, t};
