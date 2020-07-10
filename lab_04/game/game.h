@@ -41,6 +41,27 @@ private:
 
   bool is_next_king_step(const step_t &step, int side);
 
+  bool is_available_standard_step(const step_t &step);
+
+  bool is_corect_side(const step_t &step, int side);
+
+  bool is_standard_step(const step_t &step, int side);
+
+  bool is_king_standard_step(const step_t &step, int side);
+
+  bool is_standard_kill(const step_t &step, int side);
+
+  bool is_available_kill(const step_t &step, int side);
+
+  bool search_kill(point_t t, const field_t &field, int side);
+
+  bool check_kill(point_t t, const field_t &fld, int side);
+
+  bool king_check_kill(point_t t, const field_t &field, int side);
+
+
+
+
     field_t field;
     std::vector<player_t> players;
 };
